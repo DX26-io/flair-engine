@@ -13,22 +13,22 @@
     <packaging>war</packaging>
     <name>flair-engine</name>
     <scm>
-        <connection>scm:git:https://github.com/viz-centric/flair-engine.git</connection>
-        <developerConnection>scm:git:https://github.com/viz-centric/flair-engine.git</developerConnection>
+        <connection>scm:git:https://github.com/DX26-io/flair-engine.git</connection>
+        <developerConnection>scm:git:https://github.com/DX26-io/flair-engine.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/viz-centric/flair-engine.git</url>
+        <url>https://github.com/DX26-io/flair-engine.git</url>
     </scm>
     <distributionManagement>
         <repository>
-            <id>dev-azure-com-vizcentric-flair-engine</id>
-            <url>https://pkgs.dev.azure.com/VizCentric/_packaging/flair-engine/maven/v1</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>aws-release</id>
+            <name>AWS Release Repository</name>
+            <url>s3://${bucket.name}/release</url>
         </repository>
+        <snapshotRepository>
+            <id>aws-snapshot</id>
+            <name>AWS Snapshot Repository</name>
+            <url>s3://${bucket.name}/snapshot</url>
+        </snapshotRepository>
     </distributionManagement>
     <repositories>
         <repository>
@@ -199,6 +199,10 @@
         <project-bi-common.version>1.4.16</project-bi-common.version>
         <all-grpc.version>1.23.0</all-grpc.version>
         <lombok.version>1.18.8</lombok.version>
+        
+        <aws-maven.version>5.0.0.RELEASE</aws-maven.version>
+        <bucket.name>dx26-mvn-repo</bucket.name>
+        <docker.org>dx26io</docker.org>
 
 
     </properties>
@@ -857,6 +861,13 @@
     </dependencies>
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>${aws-maven.version}</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1314,7 +1325,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>flairbi/${project.artifactId}</name>
+                                    <name>${docker.org}/${project.artifactId}</name>
                                     <build>
                                         <tags>
                                             <tag>latest</tag>
@@ -1324,7 +1335,7 @@
                                     </build>
                                 </image>
                                 <image>
-                                    <name>flairbi/flair-engine-pgsql</name>
+                                    <name>${docker.org}/flair-engine-pgsql</name>
                                     <build>
                                         <tags>
                                             <tag>latest</tag>
@@ -1371,7 +1382,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>flairbi/${project.artifactId}</name>
+                                    <name>${docker.org}/${project.artifactId}</name>
                                     <build>
                                         <tags>
                                             <tag>v${project.version}.${revision}</tag>
@@ -1380,7 +1391,7 @@
                                     </build>
                                 </image>
                                 <image>
-                                    <name>flairbi/flair-engine-pgsql</name>
+                                    <name>${docker.org}/flair-engine-pgsql</name>
                                     <build>
                                         <tags>
                                             <tag>v${project.version}.${revision}</tag>
